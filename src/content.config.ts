@@ -28,6 +28,7 @@ const posts = defineCollection({
       )
       .default([]),
     notClaimed: z.array(z.string()).default([]),
+    references: z.array(z.object({ text: z.string(), label: z.string().optional(), url: z.string().url().optional() })).default([]),
     disclaimer: z.string().optional(),
     // Optional header artwork drawn behind the title
     art: z.enum(["cells"]).optional(),

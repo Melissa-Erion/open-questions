@@ -77,8 +77,20 @@ footer.site a:hover { color: var(--ink); }
 
 /* Long-form prose rendered from Markdown */
 .prose { display: grid; gap: 20px; }
-.prose h2 { font-size: 1.35rem; margin-top: 36px; }
-.prose h2:first-child { margin-top: 0; }
+.prose h2 { font-size: 1.6rem; letter-spacing: -0.025em; margin-top: 52px; padding-top: 48px; border-top: 1px solid var(--line); scroll-margin-top: 24px; }
+.prose h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+
+/* Numbered evidence rows */
+.prose .evidence ol { list-style: none; padding: 0; gap: 0; counter-reset: ev; border-top: 1px solid var(--line); }
+.prose .evidence li { counter-increment: ev; display: grid; grid-template-columns: 36px 1fr; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 0.97rem; }
+.prose .evidence li::before { content: counter(ev, decimal-leading-zero); color: var(--accent); font-weight: 600; font-size: 0.85rem; font-variant-numeric: tabular-nums; padding-top: 3px; }
+.prose .evidence li > * { grid-column: 2; }
+.prose .evidence .limit { display: block; margin-top: 6px; font-size: 0.92rem; }
+.prose .evidence a { display: inline-block; margin-top: 6px; font-size: 0.88rem; color: var(--muted); }
+
+/* References */
+.prose .refs ol { font-size: 0.9rem; gap: 8px; color: var(--muted); }
+.prose .refs a { overflow-wrap: anywhere; }
 .prose h3 { font-size: 1.05rem; }
 .prose ul, .prose ol { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; }
 .prose li::marker { color: var(--faint); }
