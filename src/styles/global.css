@@ -124,3 +124,7 @@ footer.site a:hover { color: var(--ink); }
 /* Review states */
 .prose .pipe { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 0.93rem; }
 .prose .pipe i { font-style: normal; color: var(--faint); }
+
+/* Authorship note */
+.prose .credit { padding: 16px 18px; border-left: 2px solid var(--accent); background: var(--tint); font-size: 0.95rem; color: var(--muted); }
+.prose .credit strong { color: var(--ink); font-weight: 600; }

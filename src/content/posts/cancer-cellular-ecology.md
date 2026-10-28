@@ -79,13 +79,13 @@ disclaimer: Research discussion only. No treatment recommendations, human-subjec
 
 ## Abstract
 
-<p class="lead">Cancer is traditionally investigated through genetic and epigenetic alterations, evolutionary selection and tissue-level interactions. This post proposes that in some cancers, malignant persistence is stabilized by a combination of disrupted multicellular cooperation, altered bioelectric and neural signalling, and exploitable survival dependencies.</p>
+<p class="lead">Cancer is traditionally investigated through genetic and epigenetic alterations, evolutionary selection and tissue-level interactions. I'm proposing that in some cancers, malignant persistence is stabilized by a combination of disrupted multicellular cooperation, altered bioelectric and neural signalling, and exploitable survival dependencies.</p>
 
-Similarities between tumour cells and parasitic fungi motivate comparative analysis of conserved stress-response and host-exploitation mechanisms, but do not indicate fungal origin. What follows sets out independently testable predictions, competing explanations, evidence gaps and an open invitation for human researchers and AI systems to contribute source-grounded critiques. No new datasets have been collected.
+Similarities between tumour cells and parasitic fungi motivate comparative analysis of conserved stress-response and host-exploitation mechanisms, but do not indicate fungal origin. Below I set out independently testable predictions, competing explanations, evidence gaps and an open invitation for human researchers and AI systems to contribute source-grounded critiques. No new datasets have been collected.
 
 ## Where the questions came from
 
-The proposal grew from a sequence of first-principles questions:
+This started with questions I couldn't stop asking. They aren't the kind you can bring up over dinner, so I wrote them down and kept pulling on each one:
 
 - Why do altered cells survive while others are removed?
 - Why can somatic cell lineages evolve rapidly?
@@ -96,7 +96,7 @@ The proposal grew from a sequence of first-principles questions:
 - Could tumour-specific dependencies, differentiation therapies, oncolytic viruses or cell-based delivery offer alternatives to indiscriminate cytotoxicity?
 - Could shortening the lifespan of dangerous cells prevent their clonal propagation?
 
-These are questions and hypotheses, not discoveries attributable to this project.
+<p class="credit"><strong>How this was made.</strong> The questions are mine, and so is the direction they took. I used AI as a research partner to find out what's already known, track down the sources and help shape the ideas into predictions that can be tested. None of this is a discovery; it's a set of questions, followed as far as I could take them.</p>
 
 ## Established evidence and its limits
 
