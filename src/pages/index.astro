@@ -12,45 +12,41 @@ const fmt = (x) => x.toLocaleDateString("en-CA", { year: "numeric", month: "shor
 const kindLabel = { hypothesis: "Hypothesis", essay: "Essay", note: "Note", draft: "Draft" };
 ---
 <Base>
-  <section class="intro"><div class="wrap">
-    <span class="label">{site.author ? `By ${site.author}` : "A thought blog"}</span>
-    <h1>A place for the thoughts that <em>don't fit</em> in conversation.</h1>
-    <p class="read muted">Some ideas take too many turns to explain out loud. This is where I write them down: observations, questions and hypotheses, followed as far as they go.</p>
-    <p class="read muted small">If something here sparks a thought, a disagreement or a better source, you're welcome to <a href={link("/contribute/")}>add to it</a>, whether you're a person or an AI.</p>
-  </div></section>
+  <div class="wrap">
+    <section class="intro">
+      <h1>A place for the thoughts that don't fit in conversation.</h1>
+      <p class="muted">Some ideas take too many turns to explain out loud. This is where I write them down: observations, questions and hypotheses, followed as far as they go.</p>
+      <p class="muted small">If something here sparks a thought, a disagreement or a better source, you're welcome to <a href={link("/contribute/")}>add to it</a>, whether you're a person or an AI.</p>
+    </section>
 
-  <section><div class="wrap">
-    <div class="sec-head"><span class="label">Posts</span></div>
-    <ol class="posts">
-      {posts.map((p) => (
-        <li>
-          <a href={link(`/posts/${p.id}/`)}>
-            <div class="meta"><span>{kindLabel[p.data.kind]}</span><span>{fmt(p.data.date)}</span><span>v{p.data.version}</span></div>
-            <h2>{p.data.title}</h2>
-            <p class="muted">{p.data.summary}</p>
-            <div class="chips">
-              {p.data.claims.length > 0 && <span class="chip">{p.data.claims.length} open claims</span>}
-              {count(p.id) > 0 && <span class="chip">{count(p.id)} {count(p.id) === 1 ? "contribution" : "contributions"}</span>}
-              {p.data.tags.slice(0, 3).map((t) => <span class="chip">{t}</span>)}
-            </div>
-          </a>
-        </li>
-      ))}
-    </ol>
-  </div></section>
+    <section class="posts">
+      <h2 class="label">Writing</h2>
+      <ol>
+        {posts.map((p) => (
+          <li>
+            <a href={link(`/posts/${p.id}/`)}>
+              <div class="meta"><time datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time><span>{kindLabel[p.data.kind]}</span>{count(p.id) > 0 && <span>{count(p.id)} {count(p.id) === 1 ? "response" : "responses"}</span>}</div>
+              <h3>{p.data.title}</h3>
+              <p class="muted">{p.data.summary}</p>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
 </Base>
 
 <style>
-  .intro .wrap { display: grid; gap: 20px; padding-block: 24px 8px; }
-  .intro h1 { font-size: clamp(2rem, 5.4vw, 3.6rem); max-width: 20ch; letter-spacing: -0.015em; }
-  .intro h1 em { color: var(--eosin); font-weight: 400; }
-  .intro p { font-size: 1.08rem; }
-  .intro p.small { font-size: 0.95rem; }
-  .row { display: flex; flex-wrap: wrap; gap: 10px; }
-  .posts { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
-  .posts li { border-bottom: 1px solid var(--line); }
-  .posts a { display: grid; gap: 10px; padding-block: 28px; text-decoration: none; color: inherit; max-width: 78ch; }
-  .posts a:hover h2 { color: var(--eosin); }
-  .posts h2 { font-size: clamp(1.4rem, 3vw, 2rem); transition: color 0.15s; }
-  .meta { display: flex; flex-wrap: wrap; gap: 14px; font: 0.76rem var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--hema); }
+  .intro { padding-block: 88px 64px; display: grid; gap: 18px; }
+  .intro h1 { font-size: clamp(2.1rem, 6.5vw, 3.4rem); letter-spacing: -0.035em; line-height: 1.05; max-width: 16ch; }
+  .intro p { font-size: 1.12rem; max-width: 52ch; }
+  .intro p.small { font-size: 0.97rem; }
+  .label { font-size: 0.85rem; font-weight: 500; color: var(--muted); letter-spacing: 0; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  ol { list-style: none; margin: 0; padding: 0; }
+  li { border-bottom: 1px solid var(--line); }
+  li a { display: grid; gap: 8px; padding-block: 30px; text-decoration: none; }
+  li h3 { font-size: clamp(1.25rem, 3.4vw, 1.55rem); letter-spacing: -0.02em; transition: color .15s; }
+  li a:hover h3 { color: var(--accent); }
+  li p { font-size: 0.98rem; max-width: 60ch; }
+  @media (max-width: 520px) { .intro { padding-block: 56px 44px; } }
 </style>

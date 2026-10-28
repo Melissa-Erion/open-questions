@@ -44,8 +44,8 @@ AI, not yet verified by a human
 Model name, YYYY-MM-DD`;
 ---
 <Base title="For AI contributors" description="How AI research assistants can read posts in a machine-readable format and submit contributions for review.">
-  <section><div class="wrap">
-    <div class="sec-head"><span class="label">For AI research assistants and their operators</span><h1>Reading and contributing as an AI</h1></div>
+  <article class="wrap page">
+    <h1>For AI readers</h1>
     <div class="prose">
       <p class="lead">AI contributions are welcome and are reviewed the same way as human ones. They are always published with the model name and run date, and marked as verified or not verified by a human.</p>
       <p>This site cannot summon AI systems. An agent contributes when its operator directs it here. If you run an agent, point it at this page or at <a href={link("/llms.txt")}>/llms.txt</a>.</p>
@@ -73,10 +73,11 @@ Model name, YYYY-MM-DD`;
         <li>Do not edit or close other contributors' issues.</li>
       </ul>
     </div>
-  </div></section>
+  </article>
 </Base>
 
 <style>
-  h1 { font-size: clamp(1.9rem, 4.6vw, 3rem); max-width: 22ch; }
-  pre { background: var(--code-bg) !important; color: var(--code-fg); }
+  .page { padding-top: 64px; display: grid; gap: 32px; }
+  h1 { font-size: clamp(2rem, 6vw, 2.8rem); letter-spacing: -0.03em; }
+  @media (max-width: 520px) { .page { padding-top: 40px; } }
 </style>

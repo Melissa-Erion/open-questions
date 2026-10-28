@@ -17,7 +17,7 @@ const { Content } = await render(post);
 const contribs = await contributionsFor(post.id);
 const fmt = (x) => x.toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
 const byClaim = (id) => contribs.filter((c) => c.claim === id).length;
-const kindLabel = { hypothesis: "Open research hypothesis", essay: "Essay", note: "Note", draft: "Draft" }[d.kind];
+const kindLabel = { hypothesis: "Hypothesis", essay: "Essay", note: "Note", draft: "Draft" }[d.kind];
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -36,130 +36,99 @@ const jsonLd = {
 };
 ---
 <Base title={d.title} description={d.summary} jsonLd={jsonLd} alternateJson={`/posts/${post.id}.json`}>
-  <div class="hero">
-    <canvas id="slide" aria-hidden="true"></canvas>
-    <div class="wrap">
-      <div class="label">{kindLabel} · Version {d.version} · {fmt(d.date)}</div>
+  <article class="wrap post">
+    <header class="post-head">
+      <div class="meta"><span>{kindLabel}</span><time datetime={d.date.toISOString()}>{fmt(d.date)}</time><span>Version {d.version}</span></div>
       <h1>{d.title}</h1>
       {d.subtitle && <p class="sub">{d.subtitle}</p>}
-      <div class="chips">
-        {d.kind === "hypothesis" && <span class="chip warn">Unvalidated proposal</span>}
-        {d.claims.length > 0 && <span class="chip">{d.claims.length} open claims</span>}
-        <span class="chip">{contribs.length} {contribs.length === 1 ? "contribution" : "contributions"}</span>
-      </div>
-      {d.status && <div class="status"><strong>Status</strong><span>{d.status}</span></div>}
-      <div class="actions">
-        <a class="btn ghost" href="#contributions">Discuss or contribute</a>
-      </div>
-    </div>
-  </div>
+      {d.status && <p class="status"><strong>Status:</strong> {d.status}</p>}
+    </header>
 
-  <section><div class="wrap"><article class="prose"><Content /></article></div></section>
+    <div class="prose"><Content /></div>
 
-  {d.claims.length > 0 && (
-    <section id="claims"><div class="wrap">
-      <div class="sec-head"><span class="label">Open for review</span><h2>Claims, each with a way to fail</h2>
-        <p class="muted read">Every claim has an ID. Contributions reference these IDs so evidence stays attached to the right idea.</p></div>
-      <div class="claims">
-        {d.claims.map((c) => (
-          <article class="claim" id={c.id}>
-            <header><span class="id">{c.id}</span><h3>{c.title}</h3></header>
-            <p class="q">{c.question}</p>
-            <dl>
-              {c.prediction && <div><dt class="pr">Prediction</dt><dd>{c.prediction}</dd></div>}
-              {c.falsification && <div><dt class="fa">Falsified if</dt><dd>{c.falsification}</dd></div>}
-            </dl>
-            <footer>
-              <a href={contributeUrl(post.id, c.id)}>Respond to {c.id} →</a>
-              <span class="muted">{byClaim(c.id)} approved</span>
-            </footer>
-          </article>
-        ))}
-      </div>
-    </div></section>
-  )}
-
-  {d.notClaimed.length > 0 && (
-    <section><div class="wrap">
-      <div class="sec-head"><span class="label">Explicit exclusions</span><h2>What this post does not claim</h2></div>
-      <div class="excl">{d.notClaimed.map((x) => <span>{x}</span>)}</div>
-    </div></section>
-  )}
-
-  <section id="contributions"><div class="wrap">
-    <div class="sec-head"><span class="label">Discussion</span><h2>What others have added</h2>
-      <p class="muted read">Thoughts, sources and disagreements are welcome, from people and AI alike. Contributions are submitted on GitHub and appear here once reviewed. AI contributions are labelled with the model that wrote them. <a href={link(`/posts/${post.id}.json`)}>Machine-readable version</a> of this post.</p></div>
-    {contribs.length === 0 ? (
-      <div class="empty">
-        <p>Nothing added yet. If this sparked a thought, a source or a disagreement, you're welcome to share it.</p>
-        <a class="btn ghost" href={contributeUrl(post.id)}>Add a thought</a>
-      </div>
-    ) : (
-      <div class="list">{contribs.map((c) => <Contribution c={c} />)}</div>
+    {d.claims.length > 0 && (
+      <section id="claims" class="block">
+        <h2>Claims</h2>
+        <p class="muted intro">Each claim has an ID so responses stay attached to the right idea.</p>
+        <ol class="claims">
+          {d.claims.map((c) => (
+            <li class="claim" id={c.id}>
+              <div class="claim-id">{c.id}</div>
+              <div class="claim-body">
+                <h3>{c.title}</h3>
+                <p>{c.question}</p>
+                {c.prediction && <p class="pf"><span>Prediction</span>{c.prediction}</p>}
+                {c.falsification && <p class="pf"><span>Falsified if</span>{c.falsification}</p>}
+                <a class="textlink small" href={contributeUrl(post.id, c.id)}>Respond to {c.id}{byClaim(c.id) ? ` · ${byClaim(c.id)} so far` : ""}</a>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
     )}
-  </div></section>
 
-  {d.disclaimer && <div class="wrap disclaimer"><strong>Disclaimer.</strong> {d.disclaimer}</div>}
+    {d.notClaimed.length > 0 && (
+      <section class="block">
+        <h2>What this post does not claim</h2>
+        <ul class="notclaimed">{d.notClaimed.map((x) => <li>{x}</li>)}</ul>
+      </section>
+    )}
+
+    <section id="contributions" class="block">
+      <h2>Discussion</h2>
+      <p class="muted intro">Thoughts, sources and disagreements are welcome from people and AI alike. Contributions are submitted on GitHub and appear here once reviewed; AI contributions name the model that wrote them.</p>
+      {contribs.length === 0 ? (
+        <p class="empty">Nothing added yet. <a class="textlink" href={contributeUrl(post.id)}>Add a thought</a></p>
+      ) : (
+        <>
+          <div class="list">{contribs.map((c) => <Contribution c={c} />)}</div>
+          <p><a class="textlink" href={contributeUrl(post.id)}>Add a thought</a></p>
+        </>
+      )}
+    </section>
+
+    <footer class="post-foot muted">
+      {d.disclaimer && <p><strong>Disclaimer:</strong> {d.disclaimer}</p>}
+      <p><a href={link(`/posts/${post.id}.json`)}>Machine-readable version</a></p>
+    </footer>
+  </article>
 </Base>
 
 <style>
-  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
-  #slide { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.55; }
-  .hero .wrap { position: relative; padding-block: 64px 48px; display: grid; gap: 20px; }
-  .hero h1 { font-size: clamp(2.1rem, 5.6vw, 4rem); letter-spacing: -0.015em; max-width: 17ch; }
-  .sub { font-size: 1.1rem; color: var(--muted); max-width: 58ch; }
-  .status { display: flex; gap: 14px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--eosin); padding: 14px 18px; max-width: 72ch; font-size: 0.95rem; }
-  .status strong { color: var(--eosin); font: 500 0.74rem var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 3px; }
-  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .post { padding-top: 64px; }
+  .post-head { display: grid; gap: 18px; margin-bottom: 48px; }
+  .post-head h1 { font-size: clamp(2rem, 6vw, 3rem); letter-spacing: -0.03em; line-height: 1.08; }
+  .sub { font-size: 1.2rem; color: var(--muted); line-height: 1.5; }
+  .status { font-size: 0.92rem; color: var(--muted); padding: 14px 16px; background: var(--tint); border-radius: 4px; }
+  .status strong { color: var(--ink); font-weight: 600; }
 
-  .claims { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
-  .claim { background: var(--surface); border: 1px solid var(--line); display: grid; grid-template-rows: auto auto 1fr auto; scroll-margin-top: 80px; }
-  .claim:target { border-color: var(--eosin); }
-  .claim header { display: flex; align-items: baseline; gap: 12px; padding: 20px 22px 10px; }
-  .claim .id { font: 500 0.82rem var(--f-mono); color: var(--surface); background: var(--hema); padding: 3px 8px; border-radius: 3px; }
-  .claim .q { padding: 0 22px 16px; font-size: 0.95rem; }
-  .claim dl { margin: 0; border-top: 1px solid var(--line); }
-  .claim dl div { padding: 12px 22px; display: grid; gap: 3px; }
-  .claim dl div + div { border-top: 1px dashed var(--line); }
-  .claim dt { font: 0.7rem var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; }
-  .claim dt.pr { color: var(--hema); }
-  .claim dt.fa { color: var(--eosin); }
-  .claim dd { margin: 0; font-size: 0.92rem; }
-  .claim footer { display: flex; justify-content: space-between; gap: 10px; padding: 12px 22px; border-top: 1px solid var(--line); font-size: 0.88rem; background: var(--hema-soft); }
-  .claim footer a { font-weight: 500; text-decoration: none; }
+  .block { margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--line); display: grid; gap: 14px; }
+  .block > h2 { font-size: 1.35rem; }
+  .intro { font-size: 0.95rem; }
 
-  .excl { display: flex; flex-wrap: wrap; gap: 10px; }
-  .excl span { padding: 8px 14px; border: 1px solid var(--line); background: var(--surface); font-size: 0.92rem; text-decoration: line-through; text-decoration-color: var(--eosin); text-decoration-thickness: 1.5px; }
+  .claims { list-style: none; margin: 12px 0 0; padding: 0; display: grid; }
+  .claim { display: grid; grid-template-columns: 44px 1fr; gap: 12px; padding-block: 24px; border-top: 1px solid var(--line); scroll-margin-top: 24px; }
+  .claim:first-child { border-top: 0; padding-top: 8px; }
+  .claim-id { font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; padding-top: 1px; }
+  .claim-body { min-width: 0; display: grid; gap: 8px; }
+  .claim-body h3 { font-size: 1.05rem; }
+  .claim-body > p { font-size: 0.97rem; }
+  .pf { color: var(--muted); }
+  .pf span { color: var(--ink); font-weight: 500; margin-right: 6px; }
+  .pf span::after { content: ":"; }
+  .small { font-size: 0.9rem; margin-top: 4px; }
 
-  .list { display: grid; gap: 16px; max-width: 80ch; }
-  .empty { border: 1px dashed var(--line); padding: 28px; display: grid; gap: 16px; justify-items: start; max-width: 72ch; background: var(--surface); }
-  .disclaimer { padding-block: 32px 8px; color: var(--muted); font-size: 0.9rem; }
-  .disclaimer strong { color: var(--ink); }
-</style>
+  .notclaimed { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; color: var(--muted); }
+  .notclaimed li::marker { content: "–  "; color: var(--faint); }
 
-<script>
-  // Stained-slide texture: nuclei (haematoxylin) in an eosin field, densest on the right
-  const c = document.getElementById("slide");
-  function draw() {
-    if (!c) return;
-    const r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-    c.width = r.width * dpr; c.height = r.height * dpr;
-    const x = c.getContext("2d"); x.scale(dpr, dpr);
-    const cs = getComputedStyle(document.documentElement);
-    const hema = cs.getPropertyValue("--hema").trim(), eos = cs.getPropertyValue("--eosin").trim();
-    let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-    const n = Math.round((r.width * r.height) / 2600);
-    for (let i = 0; i < n; i++) {
-      const px = rnd() * r.width, py = rnd() * r.height, w = Math.pow(px / r.width, 1.6);
-      if (rnd() > w * 1.1) continue;
-      const rad = 6 + rnd() * 14;
-      x.globalAlpha = 0.08 + 0.1 * w; x.fillStyle = eos;
-      x.beginPath(); x.ellipse(px, py, rad * 1.5, rad * 1.2, rnd() * 3, 0, 7); x.fill();
-      x.globalAlpha = 0.18 + 0.35 * w; x.fillStyle = hema;
-      x.beginPath(); x.ellipse(px, py, rad * 0.45, rad * 0.38, rnd() * 3, 0, 7); x.fill();
-    }
+  .list { display: grid; }
+  .empty { color: var(--muted); }
+
+  .post-foot { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); display: grid; gap: 8px; font-size: 0.87rem; }
+  .post-foot strong { color: var(--ink); font-weight: 600; }
+
+  @media (max-width: 520px) {
+    .post { padding-top: 40px; }
+    .claim { grid-template-columns: 1fr; gap: 6px; }
   }
-  draw();
-  let t; addEventListener("resize", () => { clearTimeout(t); t = setTimeout(draw, 150); });
-  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
-</script>
+</style>

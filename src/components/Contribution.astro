@@ -4,39 +4,36 @@ import { REVIEW_LABELS } from "../lib/contributions.mjs";
 const { c } = Astro.props;
 const isAI = c.contributor.startsWith("AI");
 const date = new Date(c.created).toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" });
-const conflicting = /conflicting|counterexample|correction/i.test(c.type);
 ---
 <article class="contrib" id={`c${c.number}`}>
-  <header>
-    <span class:list={["kind", { warn: conflicting }]}>{c.type}</span>
-    <span class="chip">{c.claim}</span>
-    {c.review.map((l) => <span class:list={["chip", REVIEW_LABELS[l].tone]}>{REVIEW_LABELS[l].text}</span>)}
-  </header>
+  <div class="meta">
+    <span class="type">{c.type}</span>
+    <span>{c.claim}</span>
+    {c.review.map((l) => <span class:list={["state", REVIEW_LABELS[l].tone]}>{REVIEW_LABELS[l].text}</span>)}
+  </div>
   <div class="body"><SafeText text={c.summary} /></div>
-  {c.sources && (
-    <div class="field"><span class="label">Sources</span><SafeText text={c.sources} /></div>
-  )}
-  {c.uncertainty && (
-    <div class="field"><span class="label">Uncertainty</span><SafeText text={c.uncertainty} /></div>
-  )}
-  <footer>
+  {c.sources && <div class="field"><span>Sources</span><SafeText text={c.sources} /></div>}
+  {c.uncertainty && <div class="field"><span>Uncertainty</span><SafeText text={c.uncertainty} /></div>}
+  <div class="by">
     <span>
-      {isAI ? (c.agent ? `${c.agent} · ` : "AI · ") : ""}
-      submitted by <a href={`https://github.com/${c.author}`} rel="nofollow ugc noopener">@{c.author}</a> · {date}
-      {c.evidence && ` · ${c.evidence}`}
+      <a href={`https://github.com/${c.author}`} rel="nofollow ugc noopener">@{c.author}</a>
+      {isAI && <> · {c.agent || "AI"} · {c.contributor.startsWith("AI, verified") ? "verified by a human" : "not yet verified by a human"}</>}
+      {" "}· {date}
     </span>
-    {isAI && <span class:list={["chip", c.contributor.includes("verified by") ? "ok" : "warn"]}>{c.contributor}</span>}
-    <a href={c.url}>Discuss #{c.number}{c.comments ? ` (${c.comments})` : ""}</a>
-  </footer>
+    <a href={c.url}>Reply{c.comments ? ` (${c.comments})` : ""}</a>
+  </div>
 </article>
 
 <style>
-  .contrib { background: var(--surface); border: 1px solid var(--line); padding: 20px 22px; display: grid; gap: 14px; }
-  header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .kind { font: 600 0.78rem var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--hema); margin-right: 4px; }
-  .kind.warn { color: var(--eosin); }
+  .contrib { display: grid; gap: 12px; padding-block: 24px; border-bottom: 1px solid var(--line); }
+  .contrib:first-child { padding-top: 8px; }
+  .type { color: var(--ink); font-weight: 500; }
+  .state.ok { color: var(--accent); }
+  .state.warn { color: var(--ink); text-decoration: underline; text-decoration-color: var(--faint); }
   .body, .field { display: grid; gap: 10px; min-width: 0; overflow-wrap: anywhere; }
-  .field p { font-size: 0.92rem; }
-  footer { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 0.84rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 12px; }
-  footer > a { margin-left: auto; }
+  .field { font-size: 0.92rem; color: var(--muted); padding-left: 14px; border-left: 2px solid var(--line); }
+  .field > span { color: var(--ink); font-weight: 500; font-size: 0.85rem; }
+  .by { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 0.85rem; color: var(--muted); }
+  .by a { color: var(--muted); }
+  .by a:hover { color: var(--accent); }
 </style>
