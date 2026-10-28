@@ -231,7 +231,7 @@ const wave = Array.from({ length: 121 }, (_, i) => {
   .route li.up .step { bottom: calc(50% + 34px); }
   .route li:not(.up) .step { top: calc(50% + 34px); }
   .route .n { color: var(--faint); }
-  .route li.first .step, .route li.last .step { font-family: var(--f-serif); font-style: italic; font-size: 1.12rem; }
+  .route li.first .step, .route li.last .step { font-weight: 600; }
   .route li:hover .dot { transform: scale(1.5); background: var(--accent); }
   .route li:hover .step { color: var(--accent); }
 
@@ -278,7 +278,7 @@ const wave = Array.from({ length: 121 }, (_, i) => {
   .index a { display: grid; grid-template-columns: 64px minmax(0, 1fr) 140px 220px 150px 28px; column-gap: 20px; align-items: baseline; padding: 26px 8px; text-decoration: none; transition: background .25s, padding .25s; }
   .index a:hover { background: var(--paper); padding-inline: 16px 4px; }
   .no { color: var(--faint); }
-  .ttl { font-family: var(--f-serif); font-size: clamp(1.35rem, 2.4vw, 1.9rem); line-height: 1.1; letter-spacing: -0.02em; }
+  .ttl { font-family: var(--f-serif); font-size: clamp(1.6rem, 2.4vw, 1.9rem); line-height: 1.1; letter-spacing: -0.02em; }
   .cat { color: var(--accent); }
   .from, .date { color: var(--muted); }
   .arrow { justify-self: end; transition: transform .25s; color: var(--accent); }
