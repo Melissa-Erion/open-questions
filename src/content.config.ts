@@ -29,6 +29,8 @@ const posts = defineCollection({
       .default([]),
     notClaimed: z.array(z.string()).default([]),
     disclaimer: z.string().optional(),
+    // Optional header artwork drawn behind the title
+    art: z.enum(["cells"]).optional(),
     draft: z.boolean().default(false),
   }),
 });

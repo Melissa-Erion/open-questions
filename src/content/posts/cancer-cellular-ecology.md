@@ -5,6 +5,7 @@ summary: An integrative, falsifiable hypothesis that some cancers persist throug
 date: 2026-10-28
 version: "1.0"
 kind: hypothesis
+art: cells
 status: Conceptual synthesis and proposed research programme. Not a clinical study, original experimental result, peer-reviewed publication, or demonstrated treatment.
 tags: [somatic evolution, atavism, bioelectricity, neuro-oncology, tumour ecology, oncolytic virotherapy]
 claims:

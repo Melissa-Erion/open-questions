@@ -8,6 +8,8 @@
   --accent: #2f5b4f;
   --tint: #f6f6f4;
   --code-bg: #f3f3f1;
+  --stain-a: #4b3f9e;
+  --stain-b: #d0628c;
   --f-sans: "Schibsted Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --f-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   color-scheme: light;
@@ -22,6 +24,8 @@
     --accent: #93c1b2;
     --tint: #191918;
     --code-bg: #1b1b1a;
+    --stain-a: #9d93f0;
+    --stain-b: #e584a9;
     color-scheme: dark;
   }
 }
