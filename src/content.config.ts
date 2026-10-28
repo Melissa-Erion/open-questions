@@ -30,6 +30,10 @@ const posts = defineCollection({
     notClaimed: z.array(z.string()).default([]),
     references: z.array(z.object({ text: z.string(), label: z.string().optional(), url: z.string().url().optional() })).default([]),
     disclaimer: z.string().optional(),
+    // Broad subject, shown on the home page (Biology, Consciousness, Technology …)
+    category: z.string().optional(),
+    // Where the conversation went: the first question, then each turn it took
+    path: z.array(z.string()).default([]),
     // Optional header artwork drawn behind the title
     art: z.enum(["cells"]).optional(),
     draft: z.boolean().default(false),

@@ -1,0 +1,41 @@
+---
+// Haematoxylin-and-eosin style cell field.
+// fade="edge": densest on the right so overlaid text stays clear. fade="none": an even field, used as an image.
+const { fade = "edge", seed = 11, class: cls = "" } = Astro.props;
+---
+<canvas class:list={["cells", cls]} data-cells data-fade={fade} data-seed={seed} aria-hidden="true"></canvas>
+
+<script>
+  function drawAll() {
+    document.querySelectorAll<HTMLCanvasElement>("canvas[data-cells]").forEach((canvas) => {
+      const r = canvas.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+      const x = canvas.getContext("2d")!; x.scale(dpr, dpr);
+      const cs = getComputedStyle(document.documentElement);
+      const a = cs.getPropertyValue("--stain-a").trim(), b = cs.getPropertyValue("--stain-b").trim();
+      const edge = canvas.dataset.fade === "edge";
+      const narrow = r.width < 640;
+      let seed = Number(canvas.dataset.seed) || 11;
+      const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+      const n = Math.round((r.width * r.height) / (edge ? 2200 : 1500));
+      for (let i = 0; i < n; i++) {
+        const px = rnd() * r.width, py = rnd() * r.height;
+        const w = edge ? Math.pow(px / r.width, narrow ? 2.2 : 3) : 0.55 + rnd() * 0.45;
+        if (edge && rnd() > w * 1.15) continue;
+        const rad = (narrow ? 5 : 7) + rnd() * (narrow ? 10 : 15);
+        const k = edge && narrow ? 0.6 : 1;
+        x.globalAlpha = (0.07 + 0.11 * w) * k; x.fillStyle = b;
+        x.beginPath(); x.ellipse(px, py, rad * 1.5, rad * 1.15, rnd() * 3, 0, Math.PI * 2); x.fill();
+        x.globalAlpha = (0.16 + 0.34 * w) * k; x.fillStyle = a;
+        x.beginPath(); x.ellipse(px, py, rad * 0.42, rad * 0.36, rnd() * 3, 0, Math.PI * 2); x.fill();
+      }
+      x.globalAlpha = 1;
+    });
+  }
+  drawAll();
+  let t: number | undefined;
+  addEventListener("resize", () => { clearTimeout(t); t = window.setTimeout(drawAll, 150); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
+</script>

@@ -2,88 +2,335 @@
 import { link } from "../lib/link.mjs";
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
+import Tangle from "../components/Tangle.astro";
+import Cells from "../components/Cells.astro";
 import { getContributions } from "../lib/contributions.mjs";
 
 const posts = (await getCollection("posts", (p) => !p.data.draft)).sort((a, b) => b.data.date - a.data.date);
 const contribs = await getContributions();
 const count = (slug) => contribs.filter((c) => c.post === slug).length;
-const fmt = (x) => x.toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
+const fmt = (x, month = "short") => x.toLocaleDateString("en-CA", { year: "numeric", month, day: "numeric", timeZone: "UTC" });
 const kindLabel = { hypothesis: "Hypothesis", essay: "Essay", note: "Note", draft: "Draft" };
+const feature = posts.find((p) => p.data.path.length > 1) || posts[0];
+const fpath = feature?.data.path || [];
+const est = posts.length ? Math.min(...posts.map((p) => p.data.date.getUTCFullYear())) : new Date().getFullYear();
+
+// A spiral that tightens toward the centre: the rabbit hole
+const spiral = Array.from({ length: 140 }, (_, i) => {
+  const t = i / 139, ang = t * Math.PI * 7, r = 27 * (1 - t) + 1.2;
+  return `${i ? "L" : "M"}${(30 + Math.cos(ang) * r).toFixed(2)},${(30 + Math.sin(ang) * r).toFixed(2)}`;
+}).join(" ");
+
+// Wave through the middle of each column: y crosses the midline at every node
+const N = Math.max(fpath.length, 2);
+const wave = Array.from({ length: 121 }, (_, i) => {
+  const t = i / 120;
+  const y = 50 + 34 * Math.sin(Math.PI * (N * t - 0.5));
+  return `${i ? "L" : "M"}${(t * 1000).toFixed(1)},${y.toFixed(2)}`;
+}).join(" ");
 ---
-<Base>
-  <div class="wrap">
-    <header class="hero">
-      <h1>Open Questions</h1>
+<Base description="An archive of a mind that doesn't stop questioning. Unconventional questions, unexpected connections, and conversations that rarely end where they began.">
+
+  <!-- Opening -->
+  <section class="hero">
+    <div class="wide hero-grid">
+      <p class="mono kicker">An archive <span>·</span> Est. {est} <span>·</span> {posts.length} {posts.length === 1 ? "entry" : "entries"} so far</p>
+      <div class="art"><Tangle /></div>
+      <h1 class="title"><span class="t1">Open</span><span class="t2">Questions</span></h1>
       <p class="tagline">An archive of a mind that doesn't stop questioning.</p>
-      <a class="textlink jump" href="#writing">Read the writing ↓</a>
-    </header>
-
-    <div class="about">
-      <p class="lead">I've always had more questions than I know what to do with.</p>
-      <p>My thoughts rarely follow a straight line. One question leads to another, which exposes a contradiction, which leads somewhere completely unexpected. Sometimes those connections make sense. Sometimes they're ridiculous. Either way, I need to understand why.</p>
-      <p>I'm neurodivergent, intensely curious, and far more comfortable exploring complicated ideas in writing than trying to explain the twelve different directions my brain has already taken in a conversation.</p>
-      <p>That's where this space comes in.</p>
-
-      <h2>The conversations behind the questions</h2>
-      <p>The articles here aren't conventional essays or research papers I asked AI to generate.</p>
-      <p>They're the result of actual, often lengthy conversations. I question established explanations, challenge assumptions, pull apart the answers, and explore connections between subjects that don't initially appear related.</p>
-      <p>AI gives me something I don't always find in ordinary conversation: the ability to follow a thought as far as it goes, without having to simplify it, change the subject, or explain why I'm asking in the first place.</p>
-      <p>Sometimes the conversations lead to legitimate scientific research. Sometimes they uncover gaps in my understanding. Sometimes they produce hypotheses worth investigating, and other times an idea doesn't survive closer examination.</p>
-      <p>That's part of the point.</p>
-
-      <h2>Curiosity without a predetermined destination</h2>
-      <p>This isn't a place where I claim to have discovered answers that experts have missed. It's where I document the process of looking for them.</p>
-      <p>Science, consciousness, human behaviour, evolution, technology, biology, and whatever else happens to occupy my mind at 2 a.m.</p>
-      <p>The subjects will vary. The approach won't.</p>
-      <p>I'll question things that seem obvious, challenge answers that feel incomplete, and follow connections wherever they lead.</p>
-      <p>Some thoughts will evolve. Some will be disproven. Some may never have satisfying answers.</p>
-      <p class="pull">I'm not particularly interested in being right. I'm interested in understanding what I might be missing.</p>
-      <p class="sign">Welcome to the rabbit hole.</p>
+      <div class="sub">
+        <p>Unconventional questions, unexpected connections, and conversations that rarely end where they began.</p>
+        <a class="mono down" href="#archive">Enter the archive <span aria-hidden="true">↓</span></a>
+      </div>
     </div>
+  </section>
 
-    <section class="posts" id="writing">
-      <h2 class="label">Writing</h2>
-      <ol>
-        {posts.map((p) => (
+  <!-- Introduction -->
+  <section class="intro">
+    <div class="wide cols">
+      <p class="mono margin">Introduction</p>
+      <div class="flow">
+        <p class="opener">I've always had more questions than I know what to do with.</p>
+        <p>My thoughts rarely follow a straight line. One question leads to another, which exposes a contradiction, which leads somewhere completely unexpected. Sometimes those connections make sense. Sometimes they're ridiculous. Either way, I need to understand why.</p>
+        <p>I'm neurodivergent, intensely curious, and far more comfortable exploring complicated ideas in writing than trying to explain the twelve different directions my brain has already taken in a conversation.</p>
+        <p class="turn">That's where this space comes in.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured entry and the path its conversation took -->
+  {feature && (
+    <section class="feature" aria-labelledby="feature-title">
+      <div class="wide">
+        <div class="sec-rule"><span class="mono">Featured entry</span><span class="mono">No. {String(posts.length - posts.indexOf(feature)).padStart(3, "0")}</span></div>
+        <div class="feature-grid">
+          <a class="plate" href={link(`/posts/${feature.id}/`)} tabindex="-1" aria-hidden="true">
+            {feature.data.art === "cells" ? <Cells fade="none" seed={23} /> : <div class="plate-blank"></div>}
+            <span class="mono fig">Fig. 1 — {feature.data.art === "cells" ? "A stained cell field, drawn for this entry" : feature.data.category}</span>
+          </a>
+          <div class="feature-copy">
+            <div class="meta"><span>{feature.data.category || kindLabel[feature.data.kind]}</span><span>{kindLabel[feature.data.kind]}</span><time datetime={feature.data.date.toISOString()}>{fmt(feature.data.date)}</time></div>
+            <h2 id="feature-title"><a href={link(`/posts/${feature.id}/`)}>{feature.data.title}</a></h2>
+            <p class="excerpt">{feature.data.summary}</p>
+            <a class="read" href={link(`/posts/${feature.id}/`)}>Read the entry <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+
+        {fpath.length > 1 && (
+          <div class="journey">
+            <div class="journey-head">
+              <p class="mono">Where the conversation went</p>
+              <p class="journey-note">It started with {fpath[0].charAt(0).toLowerCase() + fpath[0].slice(1)}. It ended somewhere else entirely. <span class="muted">{fpath.length - 1} turns, none of them planned.</span></p>
+            </div>
+            <div class="route" style={`--n:${fpath.length}`}>
+              <svg class="wave" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true"><path d={wave} /></svg>
+              <ol>
+                {fpath.map((step, i) => (
+                  <li class:list={[{ first: i === 0, last: i === fpath.length - 1, up: i % 2 === 0 }]}>
+                    <span class="dot"></span>
+                    <span class="step"><span class="mono n">{i === 0 ? "Start" : String(i).padStart(2, "0")}</span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- The conversations behind the questions -->
+  <section class="band">
+    <div class="wide band-grid">
+      <h2 class="band-title">The conversations behind the questions</h2>
+      <div class="band-copy">
+        <p class="big">The articles here aren't conventional essays or research papers I asked AI to generate.</p>
+        <p>They're the result of actual, often lengthy conversations. I question established explanations, challenge assumptions, pull apart the answers, and explore connections between subjects that don't initially appear related.</p>
+      </div>
+      <blockquote class="band-quote">AI gives me something I don't always find in ordinary conversation: the ability to follow a thought as far as it goes, without having to simplify it, change the subject, or explain why I'm asking in the first place.</blockquote>
+      <p class="mono band-note">AI is a thinking partner here, not simply a writing tool.</p>
+      <div class="band-outcomes">
+        <p>Sometimes the conversations lead to legitimate scientific research. Sometimes they uncover gaps in my understanding. Sometimes they produce hypotheses worth investigating, and other times an idea doesn't survive closer examination.</p>
+        <p class="point">That's part of the point.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Curiosity without a predetermined destination -->
+  <section class="curiosity">
+    <div class="wide cur-grid">
+      <h2 class="cur-title">Curiosity without a predetermined destination</h2>
+      <p class="cur-lede">This isn't a place where I claim to have discovered answers that experts have missed. It's where I document the process of looking for them.</p>
+      <p class="subjects" aria-label="Science, consciousness, human behaviour, evolution, technology, biology, and whatever else happens to occupy my mind at 2 a.m.">
+        <span>Science,</span>
+        <span>consciousness,</span>
+        <span>human behaviour,</span>
+        <span>evolution,</span>
+        <span>technology,</span>
+        <span>biology,</span>
+        <span class="tail">and whatever else happens to occupy my mind at <em>2&nbsp;a.m.</em></span>
+      </p>
+      <div class="cur-copy">
+        <p class="strong">The subjects will vary. The approach won't.</p>
+        <p>I'll question things that seem obvious, challenge answers that feel incomplete, and follow connections wherever they lead.</p>
+        <p>Some thoughts will evolve. Some will be disproven. Some may never have satisfying answers.</p>
+      </div>
+      <p class="closing">I'm not particularly interested in being right. I'm interested in understanding what I might be missing.</p>
+      <a class="hole" href="#archive">
+        <svg viewBox="0 0 60 60" aria-hidden="true"><path d={spiral} /></svg>
+        <span>Welcome to the rabbit hole.</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- The archive -->
+  <section class="archive" id="archive">
+    <div class="wide">
+      <div class="sec-rule"><span class="mono">The archive</span><span class="mono">{posts.length} {posts.length === 1 ? "entry" : "entries"}</span></div>
+      <ol class="index">
+        {posts.map((p, i) => (
           <li>
             <a href={link(`/posts/${p.id}/`)}>
-              <div class="meta"><time datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time><span>{kindLabel[p.data.kind]}</span>{count(p.id) > 0 && <span>{count(p.id)} {count(p.id) === 1 ? "response" : "responses"}</span>}</div>
-              <h3>{p.data.title}</h3>
-              <p class="muted">{p.data.summary}</p>
+              <span class="mono no">{String(posts.length - i).padStart(3, "0")}</span>
+              <span class="ttl">{p.data.title}</span>
+              <span class="mono cat">{p.data.category || kindLabel[p.data.kind]}</span>
+              <span class="mono from">{p.data.path.length ? `Began with: ${p.data.path[0]}` : kindLabel[p.data.kind]}</span>
+              <span class="mono date">{fmt(p.data.date)}{count(p.id) > 0 && ` · ${count(p.id)} ${count(p.id) === 1 ? "response" : "responses"}`}</span>
+              <span class="arrow" aria-hidden="true">→</span>
             </a>
           </li>
         ))}
       </ol>
-      <p class="invite muted">If something here sparks a thought, a disagreement or a better source, you're welcome to <a href={link("/contribute/")}>add to it</a>.</p>
-    </section>
-  </div>
+      <p class="invite">If something here sparks a thought, a disagreement or a better source, you're welcome to <a href={link("/contribute/")}>add to it</a>.</p>
+    </div>
+  </section>
 </Base>
 
 <style>
-  .hero { padding-block: 96px 56px; display: grid; gap: 16px; border-bottom: 1px solid var(--line); }
-  .hero h1 { font-size: clamp(2.6rem, 9vw, 4.6rem); letter-spacing: -0.045em; line-height: 0.98; }
-  .tagline { font-size: clamp(1.15rem, 2.6vw, 1.4rem); color: var(--muted); letter-spacing: -0.01em; max-width: 30ch; }
-  .jump { font-size: 0.92rem; margin-top: 8px; justify-self: start; }
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--ink); }
+  .hero-grid { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; padding-block: 40px 64px; }
+  .kicker { grid-column: 1 / -1; color: var(--muted); }
+  .kicker span { color: var(--faint); margin-inline: 6px; }
+  .art { grid-column: 5 / -1; grid-row: 2 / 4; align-self: center; margin-right: -40px; opacity: .95; pointer-events: none; }
+  .title { grid-column: 1 / -1; grid-row: 2; position: relative; z-index: 1; font-family: var(--f-serif); font-weight: 400; line-height: .82; letter-spacing: -0.045em; font-size: clamp(4.2rem, 15.5vw, 13.5rem); margin-top: 48px; display: grid; }
+  .t1 { font-variation-settings: "opsz" 96; }
+  .t2 { font-style: italic; padding-left: 0.62em; font-variation-settings: "opsz" 96; }
+  .tagline { grid-column: 1 / 7; grid-row: 3; position: relative; z-index: 1; margin-top: 40px; font-family: var(--f-serif); font-style: italic; font-size: clamp(1.45rem, 2.6vw, 2.1rem); line-height: 1.25; letter-spacing: -0.015em; max-width: 22ch; }
+  .sub { grid-column: 8 / 12; grid-row: 3 / 5; position: relative; z-index: 1; align-self: end; display: grid; gap: 18px; padding: 18px 0 0; border-top: 1px solid var(--ink); background: var(--bg); box-shadow: 0 0 0 14px var(--bg); }
+  .sub p { font-size: 1.02rem; line-height: 1.55; }
+  .down { color: var(--accent); text-decoration: none; justify-self: start; }
+  .down span { display: inline-block; transition: transform .25s; }
+  .down:hover span { transform: translateY(3px); }
 
-  .about { display: grid; gap: 18px; padding-block: 56px 72px; max-width: 62ch; }
-  .about p { font-size: 1.06rem; }
-  .about .lead { font-size: clamp(1.3rem, 3vw, 1.55rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.4; }
-  .about h2 { font-size: 1.25rem; letter-spacing: -0.02em; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--line); }
-  .about .pull { font-size: 1.2rem; font-weight: 500; letter-spacing: -0.015em; line-height: 1.5; padding-left: 18px; border-left: 2px solid var(--accent); margin-block: 10px; }
-  .about .sign { color: var(--accent); font-weight: 500; }
+  /* ---------- Shared ---------- */
+  section { scroll-margin-top: 16px; }
+  .sec-rule { display: flex; justify-content: space-between; gap: 16px; padding-block: 12px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); color: var(--muted); }
 
-  .label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); padding-bottom: 14px; border-bottom: 1px solid var(--line); scroll-margin-top: 24px; }
-  .posts { scroll-margin-top: 24px; }
-  ol { list-style: none; margin: 0; padding: 0; }
-  li { border-bottom: 1px solid var(--line); }
-  li a { display: grid; gap: 8px; padding-block: 30px; text-decoration: none; }
-  li h3 { font-size: clamp(1.25rem, 3.4vw, 1.55rem); letter-spacing: -0.02em; transition: color .15s; }
-  li a:hover h3 { color: var(--accent); }
-  li p { font-size: 0.98rem; max-width: 60ch; }
-  .invite { margin-top: 28px; font-size: 0.95rem; }
+  /* ---------- Introduction ---------- */
+  .intro { padding-block: 96px; }
+  .cols { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
+  .margin { grid-column: 1 / 3; color: var(--muted); padding-top: 14px; border-top: 1px solid var(--ink); align-self: start; }
+  .flow { grid-column: 4 / 11; display: grid; gap: 22px; }
+  .flow p { font-size: 1.12rem; max-width: 60ch; }
+  .opener { font-family: var(--f-serif); font-size: clamp(2rem, 4.4vw, 3.4rem) !important; line-height: 1.08; letter-spacing: -0.03em; max-width: 17ch !important; margin-bottom: 12px; }
+  .turn { font-family: var(--f-serif); font-style: italic; font-size: 1.5rem !important; color: var(--accent); }
 
-  @media (max-width: 520px) {
-    .hero { padding-block: 60px 40px; }
-    .about { padding-block: 40px 56px; }
+  /* ---------- Feature ---------- */
+  .feature { padding-bottom: 104px; }
+  .feature-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; margin-top: 40px; align-items: end; }
+  .plate { grid-column: 1 / 8; grid-row: 1; position: relative; display: block; aspect-ratio: 5 / 4; max-width: 100%; background: var(--paper); border: 1px solid var(--line); overflow: hidden; }
+  .plate :global(canvas) { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
+  .feature-grid:hover .plate :global(canvas) { transform: scale(1.04); }
+  .plate-blank { position: absolute; inset: 0; background: var(--tint); }
+  .fig { position: absolute; left: 14px; bottom: 12px; color: var(--muted); background: var(--paper); padding: 3px 7px; }
+  .feature-copy { grid-column: 7 / -1; grid-row: 1; position: relative; z-index: 1; background: var(--paper); border: 1px solid var(--ink); padding: 36px 36px 32px; margin-bottom: -48px; display: grid; gap: 18px; box-shadow: 10px 10px 0 var(--ink); transition: box-shadow .3s, transform .3s; }
+  .feature-grid:hover .feature-copy { transform: translate(-3px, -3px); box-shadow: 13px 13px 0 var(--ink); }
+  .feature-copy h2 { font-family: var(--f-serif); font-weight: 500; font-size: clamp(1.9rem, 3.4vw, 2.9rem); line-height: 1.04; letter-spacing: -0.03em; }
+  .feature-copy h2 a { text-decoration: none; }
+  .excerpt { color: var(--muted); font-size: 1.02rem; line-height: 1.6; }
+  .read { justify-self: start; font-weight: 500; color: var(--accent); text-decoration: none; }
+  .read span { display: inline-block; transition: transform .25s; }
+  .read:hover span { transform: translateX(4px); }
+
+  .journey { margin-top: 120px; display: grid; gap: 36px; }
+  .journey-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: baseline; }
+  .journey-head .mono { grid-column: 1 / 4; color: var(--muted); }
+  .journey-note { grid-column: 4 / 11; font-family: var(--f-serif); font-size: clamp(1.4rem, 2.6vw, 2rem); line-height: 1.2; letter-spacing: -0.02em; }
+  .journey-note .muted { font-family: var(--f-sans); font-size: 1rem; letter-spacing: 0; display: block; margin-top: 8px; }
+
+  .route { position: relative; height: 260px; }
+  .wave { position: absolute; left: 0; right: 0; top: 50%; height: 120px; width: 100%; transform: translateY(-50%); overflow: visible; }
+  .wave path { fill: none; stroke: var(--accent); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+  .route ol { position: relative; list-style: none; margin: 0; padding: 0; height: 100%; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
+  .route li { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .route .dot { position: absolute; top: 50%; left: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--accent); transition: transform .25s, background .25s; }
+  .route li.first .dot { background: var(--ink); border-color: var(--ink); }
+  .route li.last .dot { background: var(--accent); width: 15px; height: 15px; margin: -7.5px 0 0 -7.5px; }
+  .route .step { position: absolute; left: 4px; right: 4px; text-align: center; font-size: 0.95rem; line-height: 1.3; display: grid; gap: 4px; transition: color .2s; }
+  .route li.up .step { bottom: calc(50% + 34px); }
+  .route li:not(.up) .step { top: calc(50% + 34px); }
+  .route .n { color: var(--faint); }
+  .route li.first .step, .route li.last .step { font-family: var(--f-serif); font-style: italic; font-size: 1.12rem; }
+  .route li:hover .dot { transform: scale(1.5); background: var(--accent); }
+  .route li:hover .step { color: var(--accent); }
+
+  /* ---------- Conversations band ---------- */
+  .band { background: var(--band); color: var(--band-ink); padding-block: 112px; position: relative; }
+  .band-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 56px; }
+  .band-title { grid-column: 1 / 6; font-family: var(--f-serif); font-weight: 400; font-size: clamp(2.4rem, 5vw, 4.4rem); line-height: .98; letter-spacing: -0.035em; }
+  .band-copy { grid-column: 7 / -1; display: grid; gap: 20px; align-content: end; }
+  .band-copy p { color: var(--band-muted); font-size: 1.06rem; max-width: 52ch; }
+  .band-copy .big { color: var(--band-ink); font-size: 1.35rem; line-height: 1.45; letter-spacing: -0.01em; }
+  .band-quote { grid-column: 2 / 12; margin: 0; padding-block: 48px; border-block: 1px solid var(--band-line); font-family: var(--f-serif); font-style: italic; font-size: clamp(1.6rem, 3.3vw, 2.75rem); line-height: 1.2; letter-spacing: -0.02em; text-indent: -0.42em; }
+  .band-quote::before { content: "“"; }
+  .band-quote::after { content: "”"; }
+  .band-note { grid-column: 2 / 6; color: var(--band-muted); align-self: start; }
+  .band-outcomes { grid-column: 7 / 12; display: grid; gap: 18px; }
+  .band-outcomes p { color: var(--band-muted); font-size: 1.06rem; }
+  .band-outcomes .point { color: var(--band-ink); font-family: var(--f-serif); font-style: italic; font-size: 1.6rem; }
+
+  /* ---------- Curiosity ---------- */
+  .curiosity { padding-block: 112px 120px; }
+  .cur-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 48px; }
+  .cur-title { grid-column: 1 / 8; font-family: var(--f-serif); font-weight: 400; font-size: clamp(2.2rem, 4.6vw, 4rem); line-height: 1; letter-spacing: -0.035em; }
+  .cur-lede { grid-column: 8 / -1; align-self: end; font-size: 1.08rem; color: var(--muted); }
+  .subjects { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .32em; font-size: clamp(2rem, 5.6vw, 5rem); line-height: 1.08; letter-spacing: -0.035em; padding-block: 24px; border-block: 1px solid var(--line); }
+  .subjects span { transition: color .2s; }
+  .subjects span:nth-child(odd) { font-family: var(--f-serif); font-style: italic; }
+  .subjects span:nth-child(even) { font-weight: 500; }
+  .subjects span:hover { color: var(--accent); }
+  .subjects .tail { flex-basis: 100%; font-family: var(--f-sans); font-style: normal; font-size: clamp(1.1rem, 2vw, 1.5rem); letter-spacing: -0.01em; color: var(--muted); padding-left: 30%; margin-top: 12px; }
+  .subjects .tail em { font-family: var(--f-serif); font-style: italic; color: var(--ink); font-size: 1.3em; }
+  .cur-copy { grid-column: 2 / 7; display: grid; gap: 18px; }
+  .cur-copy p { font-size: 1.08rem; }
+  .cur-copy .strong { font-weight: 600; font-size: 1.25rem; letter-spacing: -0.015em; }
+  .closing { grid-column: 7 / -1; font-family: var(--f-serif); font-size: clamp(1.7rem, 3.2vw, 2.6rem); line-height: 1.15; letter-spacing: -0.025em; padding-left: 28px; border-left: 2px solid var(--accent); align-self: start; }
+  .hole { grid-column: 7 / -1; display: inline-flex; align-items: center; gap: 16px; justify-self: start; text-decoration: none; font-family: var(--f-serif); font-style: italic; font-size: 1.5rem; color: var(--accent); }
+  .hole svg { width: 48px; height: 48px; flex: none; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  .hole path { fill: none; stroke: currentColor; stroke-width: 1.3; }
+  .hole:hover svg { transform: rotate(-200deg) scale(.88); }
+
+  /* ---------- Archive ---------- */
+  .archive { padding-bottom: 24px; }
+  .index { list-style: none; margin: 0; padding: 0; }
+  .index li { border-bottom: 1px solid var(--line); }
+  .index a { display: grid; grid-template-columns: 64px minmax(0, 1fr) 140px 220px 150px 28px; column-gap: 20px; align-items: baseline; padding: 26px 8px; text-decoration: none; transition: background .25s, padding .25s; }
+  .index a:hover { background: var(--paper); padding-inline: 16px 4px; }
+  .no { color: var(--faint); }
+  .ttl { font-family: var(--f-serif); font-size: clamp(1.35rem, 2.4vw, 1.9rem); line-height: 1.1; letter-spacing: -0.02em; }
+  .cat { color: var(--accent); }
+  .from, .date { color: var(--muted); }
+  .arrow { justify-self: end; transition: transform .25s; color: var(--accent); }
+  .index a:hover .arrow { transform: translateX(4px); }
+  .invite { margin-top: 32px; color: var(--muted); font-size: 0.97rem; }
+
+  /* ---------- Tablet ---------- */
+  @media (max-width: 1024px) {
+    .index a { grid-template-columns: 56px minmax(0, 1fr) 120px 28px; row-gap: 8px; }
+    .from { grid-column: 2 / 4; grid-row: 2; }
+    .date { grid-column: 2 / 4; grid-row: 3; }
+    .route .step { font-size: 0.85rem; }
+  }
+
+  /* ---------- Phone ---------- */
+  @media (max-width: 760px) {
+    .hero-grid, .cols, .feature-grid, .journey-head, .band-grid, .cur-grid { grid-template-columns: minmax(0, 1fr); }
+    .hero-grid > *, .cols > *, .feature-grid > *, .journey-head > *, .band-grid > *, .cur-grid > * { grid-column: 1 !important; grid-row: auto !important; }
+    .hero-grid { padding-block: 28px 48px; }
+    .art { margin: 8px -20px -24px 0; order: 2; }
+    .title { margin-top: 28px; order: 1; }
+    .t2 { padding-left: 0.4em; }
+    .tagline { order: 3; margin-top: 0; }
+    .sub { order: 4; margin-top: 28px; }
+    .intro { padding-block: 64px; }
+    .margin { padding-top: 10px; margin-bottom: 24px; }
+    .feature { padding-bottom: 72px; }
+    .fig { top: 10px; bottom: auto; left: 10px; }
+    .feature-copy { margin: -40px 12px 0 0; padding: 24px; box-shadow: 6px 6px 0 var(--ink); }
+    .journey { margin-top: 72px; gap: 24px; }
+
+    .route { height: auto; padding-left: 4px; }
+    .wave { display: none; }
+    .route ol { display: grid; grid-template-columns: 1fr; gap: 0; height: auto; border-left: 1.5px solid var(--accent); margin-left: 6px; }
+    .route li { display: block; padding: 0 0 22px 26px; }
+    .route li:last-child { padding-bottom: 0; }
+    .route .dot { top: 7px; left: 0; }
+    .route .step, .route li.up .step, .route li:not(.up) .step { position: static; text-align: left; }
+
+    .band { padding-block: 72px; }
+    .band-grid { row-gap: 32px; }
+    .band-quote { padding-block: 32px; text-indent: 0; }
+    .curiosity { padding-block: 72px 80px; }
+    .cur-grid { row-gap: 32px; }
+    .subjects { line-height: 1.12; }
+    .subjects .tail { padding-left: 0; }
+    .closing { padding-left: 18px; }
+    .index a { grid-template-columns: 44px minmax(0, 1fr) 20px; padding-inline: 0; }
+    .index a:hover { padding-inline: 6px 0; }
+    .cat { grid-column: 2; grid-row: 2; }
+    .from { grid-column: 2; grid-row: 3; }
+    .date { grid-column: 2; grid-row: 4; }
+    .arrow { grid-column: 3; grid-row: 1; }
   }
 </style>

@@ -26,6 +26,12 @@ title: My idea
 summary: One or two sentences shown on the home page and in feeds.
 date: 2026-11-02
 kind: essay            # hypothesis | essay | note | draft
+category: Consciousness # broad subject shown on the home page
+path:                  # optional: where the conversation went, first question first
+  - The question I started with
+  - The first tangent
+  - Where it ended up
+art: cells             # optional header artwork (currently: cells)
 tags: [topic one, topic two]
 claims:                # optional: numbered claims people can respond to
   - id: C1
