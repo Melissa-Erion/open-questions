@@ -9,6 +9,9 @@
   "dependencies": {
     "@astrojs/rss": "^4.0.11",
     "@astrojs/sitemap": "^3.3.0",
+    "@fontsource-variable/azeret-mono": "^5.1.0",
+    "@fontsource-variable/newsreader": "^5.1.0",
+    "@fontsource-variable/schibsted-grotesk": "^5.1.0",
     "astro": "^5.7.0"
   },
   "private": true,

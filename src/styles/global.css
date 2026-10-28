@@ -1,5 +1,5 @@
 /* Open Questions — an independent journal of tangents.
-   High-contrast Bodoni for headlines, Schibsted Grotesk for reading, Azeret Mono for marginalia.
+   Newsreader for headlines, Schibsted Grotesk for reading, Azeret Mono for marginalia.
    Pale grey paper, near-black ink, one ultramarine "pen" accent; the article stains appear only where the subject is cells. */
 :root {
   --bg: #f1f1ee;
@@ -19,9 +19,9 @@
   --stain-a: #4b3f9e;
   --stain-b: #d0628c;
   --grain-opacity: 0.35;
-  --f-serif: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
-  --f-sans: "Schibsted Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --f-mono: "Azeret Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --f-serif: "Newsreader Variable", "Newsreader", Georgia, "Times New Roman", serif;
+  --f-sans: "Schibsted Grotesk Variable", "Schibsted Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --f-mono: "Azeret Mono Variable", "Azeret Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
