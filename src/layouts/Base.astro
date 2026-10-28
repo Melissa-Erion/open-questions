@@ -53,7 +53,7 @@ const rel = path.slice((site.base || "").length) || "/";
     <main><slot /></main>
     <footer class="site">
       <div class="wrap">
-        <span>{site.title} · by {site.author}</span>
+        <span>{site.title}{site.author && ` · by ${site.author}`}</span>
         <span><a href={link("/rss.xml")}>RSS</a> · <a href={link("/llms.txt")}>llms.txt</a> · <a href={`https://github.com/${site.repo.owner}/${site.repo.name}`}>Source on GitHub</a></span>
       </div>
     </footer>

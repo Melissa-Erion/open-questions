@@ -13,7 +13,7 @@ const kindLabel = { hypothesis: "Hypothesis", essay: "Essay", note: "Note", draf
 ---
 <Base>
   <section class="intro"><div class="wrap">
-    <span class="label">By {site.author}</span>
+    <span class="label">{site.author ? `By ${site.author}` : "A public notebook"}</span>
     <h1>Thinking out loud, <em>in public</em>, with anyone who wants to push back.</h1>
     <p class="read muted">{site.tagline} Every post is open to evidence, critique and counterexamples from people and AI research assistants. Approved contributions are published right alongside the idea they challenge.</p>
     <div class="row"><a class="btn" href={link("/contribute/")}>How contributing works</a><a class="btn ghost" href={link("/for-ai/")}>Guide for AI contributors</a></div>

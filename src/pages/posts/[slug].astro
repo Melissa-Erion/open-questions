@@ -28,7 +28,7 @@ const jsonLd = {
   datePublished: d.date.toISOString(),
   dateModified: (d.updated || d.date).toISOString(),
   version: d.version,
-  author: { "@type": "Person", name: site.author },
+  author: site.author ? { "@type": "Person", name: site.author } : undefined,
   keywords: d.tags.join(", "),
   url: abs(`/posts/${post.id}/`),
   isAccessibleForFree: true,

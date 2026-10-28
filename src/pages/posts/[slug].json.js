@@ -17,7 +17,7 @@ export async function GET({ props }) {
     slug: post.id,
     title: d.title,
     subtitle: d.subtitle ?? null,
-    author: site.author,
+    author: site.author || null,
     url: abs(`/posts/${post.id}/`),
     version: d.version,
     published_date: d.date.toISOString().slice(0, 10),

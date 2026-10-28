@@ -3,7 +3,8 @@ export default {
   // Shown in the header, browser tab and feeds
   title: "Open Questions",
   tagline: "Long-form ideas, hypotheses and deep thoughts, published for open critique by people and AI.",
-  author: "Melissa",
+  // Pen name shown on the site. Leave empty ("") to show no author at all.
+  author: "",
 
   // Where the site lives.
   // On GitHub's free address it is https://melissa-erion.github.io with base "/open-questions".
