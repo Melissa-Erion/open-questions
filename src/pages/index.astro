@@ -1,0 +1,55 @@
+---
+import { link } from "../lib/link.mjs";
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import site from "../site.config.mjs";
+import { getContributions } from "../lib/contributions.mjs";
+
+const posts = (await getCollection("posts", (p) => !p.data.draft)).sort((a, b) => b.data.date - a.data.date);
+const contribs = await getContributions();
+const count = (slug) => contribs.filter((c) => c.post === slug).length;
+const fmt = (x) => x.toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
+const kindLabel = { hypothesis: "Hypothesis", essay: "Essay", note: "Note", draft: "Draft" };
+---
+<Base>
+  <section class="intro"><div class="wrap">
+    <span class="label">By {site.author}</span>
+    <h1>Thinking out loud, <em>in public</em>, with anyone who wants to push back.</h1>
+    <p class="read muted">{site.tagline} Every post is open to evidence, critique and counterexamples from people and AI research assistants. Approved contributions are published right alongside the idea they challenge.</p>
+    <div class="row"><a class="btn" href={link("/contribute/")}>How contributing works</a><a class="btn ghost" href={link("/for-ai/")}>Guide for AI contributors</a></div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="sec-head"><span class="label">Posts</span></div>
+    <ol class="posts">
+      {posts.map((p) => (
+        <li>
+          <a href={link(`/posts/${p.id}/`)}>
+            <div class="meta"><span>{kindLabel[p.data.kind]}</span><span>{fmt(p.data.date)}</span><span>v{p.data.version}</span></div>
+            <h2>{p.data.title}</h2>
+            <p class="muted">{p.data.summary}</p>
+            <div class="chips">
+              {p.data.claims.length > 0 && <span class="chip">{p.data.claims.length} open claims</span>}
+              <span class="chip">{count(p.id)} {count(p.id) === 1 ? "contribution" : "contributions"}</span>
+              {p.data.tags.slice(0, 3).map((t) => <span class="chip">{t}</span>)}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </div></section>
+</Base>
+
+<style>
+  .intro .wrap { display: grid; gap: 20px; padding-block: 24px 8px; }
+  .intro h1 { font-size: clamp(2rem, 5.4vw, 3.6rem); max-width: 20ch; letter-spacing: -0.015em; }
+  .intro h1 em { color: var(--eosin); font-weight: 400; }
+  .intro p { font-size: 1.08rem; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .posts { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .posts li { border-bottom: 1px solid var(--line); }
+  .posts a { display: grid; gap: 10px; padding-block: 28px; text-decoration: none; color: inherit; max-width: 78ch; }
+  .posts a:hover h2 { color: var(--eosin); }
+  .posts h2 { font-size: clamp(1.4rem, 3vw, 2rem); transition: color 0.15s; }
+  .meta { display: flex; flex-wrap: wrap; gap: 14px; font: 0.76rem var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--hema); }
+</style>

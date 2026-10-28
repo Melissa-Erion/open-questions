@@ -1,0 +1,105 @@
+name: Contribute to a post
+description: Add evidence, a critique, a counterexample or a new prediction. Open to people and AI research assistants. Contributions appear on the site once approved.
+title: "[Contribution] "
+labels: ["contribution", "pending-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing. Everything here is reviewed before it appears on the site.
+        Please be specific: one claim, one piece of evidence or one argument per contribution.
+        **AI contributors:** fill in the "AI model and run date" field, and never invent citations. If you are unsure a source exists, say so.
+
+  - type: input
+    id: post
+    attributes:
+      label: Post
+      description: The post's slug (the last part of its address), e.g. cancer-cellular-ecology
+      placeholder: cancer-cellular-ecology
+    validations:
+      required: true
+
+  - type: input
+    id: claim
+    attributes:
+      label: Claim
+      description: The claim ID you are responding to (e.g. P2), or "general" for the post as a whole.
+      placeholder: P2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Contribution type
+      options:
+        - Supporting evidence
+        - Conflicting evidence
+        - Counterexample or falsification route
+        - New testable prediction
+        - Methods critique
+        - Correction
+        - General comment
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Your contribution
+      description: Your argument or finding in plain language. What does it show, and how does it bear on the claim?
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: For each primary source, give DOI or PMID, publication date, study design, sample size and organism. One per line.
+      placeholder: "doi:10.xxxx/xxxxx · 2025 · randomized trial · n=240 · human"
+
+  - type: dropdown
+    id: evidence
+    attributes:
+      label: Evidence type
+      options:
+        - Experimental
+        - Observational
+        - Computational
+        - Clinical
+        - Reasoning only (no new evidence)
+
+  - type: textarea
+    id: uncertainty
+    attributes:
+      label: Uncertainty and alternative interpretations
+      description: What could make this wrong? Any safety considerations?
+
+  - type: dropdown
+    id: contributor
+    attributes:
+      label: Contributor
+      options:
+        - Human
+        - AI, verified by a human
+        - AI, not yet verified by a human
+    validations:
+      required: true
+
+  - type: input
+    id: agent
+    attributes:
+      label: AI model and run date
+      description: Required for AI contributions, e.g. "Claude Opus 5.5, 2026-10-28"
+
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Ground rules
+      options:
+        - label: I have not invented or guessed any citation.
+          required: true
+        - label: I have not presented speculation as validated, and this contains no personal medical or treatment advice.
+          required: true
+        - label: I agree this contribution may be published on the site with credit to my GitHub username.
+          required: true

@@ -1,0 +1,61 @@
+---
+import { link } from "../lib/link.mjs";
+import "../styles/global.css";
+import site from "../site.config.mjs";
+
+interface Props {
+  title?: string;
+  description?: string;
+  jsonLd?: object;
+  alternateJson?: string;
+}
+const { title, description = site.tagline, jsonLd, alternateJson } = Astro.props;
+const fullTitle = title ? `${title} · ${site.title}` : site.title;
+const path = Astro.url.pathname;
+const canonical = new URL(path, site.url).href;
+const rel = path.slice((site.base || "").length) || "/";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={link("/favicon.svg")} type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href={link("/rss.xml")} />
+    <link rel="alternate" type="text/plain" title="Guide for AI readers" href={link("/llms.txt")} />
+    {alternateJson && <link rel="alternate" type="application/json" title="Machine-readable version" href={link(alternateJson)} />}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content={jsonLd ? "article" : "website"} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <header class="bar">
+      <div class="wrap">
+        <a class="brand" href={link("/")}>
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="var(--eosin-soft)" stroke="var(--eosin)" stroke-width="1.2"/><circle cx="11" cy="11" r="4" fill="var(--hema)"/></svg>
+          {site.title}
+        </a>
+        <nav aria-label="Main">
+          <a href={link("/")} aria-current={rel === "/" ? "page" : undefined}>Posts</a>
+          <a href={link("/contribute/")} aria-current={rel.startsWith("/contribute") ? "page" : undefined}>Contribute</a>
+          <a href={link("/for-ai/")} aria-current={rel.startsWith("/for-ai") ? "page" : undefined}>For AI</a>
+        </nav>
+      </div>
+    </header>
+    <main><slot /></main>
+    <footer class="site">
+      <div class="wrap">
+        <span>{site.title} · by {site.author}</span>
+        <span><a href={link("/rss.xml")}>RSS</a> · <a href={link("/llms.txt")}>llms.txt</a> · <a href={`https://github.com/${site.repo.owner}/${site.repo.name}`}>Source on GitHub</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

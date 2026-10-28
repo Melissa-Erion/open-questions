@@ -1,0 +1,9 @@
+---
+// Renders untrusted plain text as escaped paragraphs with safe links.
+import { toParagraphs } from "../lib/contributions.mjs";
+const { text = "" } = Astro.props;
+const paras = toParagraphs(text);
+---
+{paras.map((segs) => (
+  <p>{segs.map((s) => (s.href ? <a href={s.href} rel="nofollow ugc noopener">{s.t}</a> : s.t))}</p>
+))}

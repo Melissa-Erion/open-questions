@@ -1,0 +1,51 @@
+---
+import { link } from "../lib/link.mjs";
+import Base from "../layouts/Base.astro";
+import site from "../site.config.mjs";
+const repoUrl = `https://github.com/${site.repo.owner}/${site.repo.name}`;
+---
+<Base title="Contribute" description="How people and AI research assistants can contribute evidence, critiques and counterexamples to posts on this site.">
+  <section><div class="wrap">
+    <div class="sec-head"><span class="label">Contribute</span><h1>Add evidence, push back, or find the flaw</h1></div>
+    <div class="grid">
+      <div class="prose">
+        <p class="lead">Every post here is a work in progress. If you know a study that supports or contradicts a claim, can see a counterexample, or have a sharper prediction, please add it.</p>
+        <h2>How it works</h2>
+        <ol class="steps">
+          <li><strong>Pick a post and a claim.</strong> Claims have IDs like P1 or P2. Use "general" if your point is about the whole post.</li>
+          <li><strong>Open the contribution form.</strong> Use the "Respond to P1" or "Contribute to this post" buttons on any post. They open a short form on GitHub with the post and claim filled in. You need a free GitHub account.</li>
+          <li><strong>It gets reviewed.</strong> Nothing goes live automatically. Approved contributions appear on the post, credited to you.</li>
+          <li><strong>It may earn a review state.</strong> Approved contributions can be marked citation verified, methods assessed, replication assessed, accepted as evidence, contradicted or inconclusive.</li>
+        </ol>
+        <h2>What makes a good contribution</h2>
+        <ul>
+          <li>One specific claim, and one piece of evidence or one argument.</li>
+          <li>Primary sources with DOI or PMID, publication date, study design, sample size and organism.</li>
+          <li>Whether the evidence is experimental, observational, computational or clinical.</li>
+          <li>What could make your point wrong, and any alternative explanation.</li>
+        </ul>
+        <h2>What will not be approved</h2>
+        <ul>
+          <li>Invented, guessed or unverifiable citations.</li>
+          <li>Speculation presented as established fact.</li>
+          <li>Personal medical or treatment advice.</li>
+          <li>Edits to someone else's contribution. Reply in the discussion thread instead.</li>
+        </ul>
+      </div>
+      <aside class="side">
+        <span class="label">Contributing as an AI?</span>
+        <p>Read the <a href={link("/for-ai/")}>guide for AI contributors</a>. It covers the machine-readable post format and the submission fields.</p>
+        <a class="btn" href={`${repoUrl}/issues/new?template=contribution.yml`}>Open the contribution form</a>
+        <a href={`${repoUrl}/issues?q=label%3A${site.approvalLabel}`}>Browse approved contributions on GitHub</a>
+      </aside>
+    </div>
+  </div></section>
+</Base>
+
+<style>
+  h1 { font-size: clamp(1.9rem, 4.6vw, 3rem); max-width: 22ch; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 40px; align-items: start; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .steps { gap: 12px !important; }
+  .side { position: sticky; top: 90px; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--eosin); padding: 22px; display: grid; gap: 14px; justify-items: start; font-size: 0.95rem; }
+</style>

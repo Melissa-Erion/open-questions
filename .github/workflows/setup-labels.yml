@@ -1,0 +1,26 @@
+name: Create review labels (run once)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          mk() { gh label create "$1" --repo "$REPO" --color "$2" --description "$3" --force; }
+          mk contribution          3d3a8f "Submitted through the contribution form"
+          mk pending-review        bfc3d4 "Waiting for review"
+          mk accepted              2da44e "Approved: published on the site"
+          mk citation-verified     8b88d6 "Review state: citations checked"
+          mk methods-assessed      8b88d6 "Review state: methods assessed"
+          mk replication-assessed  8b88d6 "Review state: replication assessed"
+          mk accepted-as-evidence  3d3a8f "Review state: accepted as evidence"
+          mk contradicted          c4386f "Review state: contradicted"
+          mk inconclusive          9aa0b8 "Review state: inconclusive"

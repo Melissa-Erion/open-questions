@@ -1,0 +1,120 @@
+/* Stained-slide notebook: haematoxylin violet and eosin pink on cool slide-glass */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #1b1f33;
+  --muted: #5a6078;
+  --line: #d9dde8;
+  --hema: #3d3a8f;
+  --eosin: #c4386f;
+  --eosin-soft: #f7e3ec;
+  --hema-soft: #e6e5f5;
+  --code-bg: #1b1f33;
+  --code-fg: #e4e6f2;
+  --f-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12141f;
+    --surface: #1a1d2c;
+    --ink: #e7e8f2;
+    --muted: #9aa0b8;
+    --line: #2e3247;
+    --hema: #a8a4f0;
+    --eosin: #f07aa6;
+    --eosin-soft: #3a1f2c;
+    --hema-soft: #25243f;
+    --code-bg: #0c0d15;
+    --code-fg: #dfe1ee;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16.5px;
+  line-height: 1.65;
+}
+img { max-width: 100%; height: auto; }
+a { color: var(--hema); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: var(--eosin); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--eosin); outline-offset: 2px; border-radius: 3px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.15; font-weight: 600; margin: 0; }
+p { margin: 0; }
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.read { max-width: 68ch; }
+.label { font-family: var(--f-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.chip { font-family: var(--f-mono); font-size: 0.74rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); white-space: nowrap; }
+.chip.warn { border-color: var(--eosin); color: var(--eosin); background: var(--eosin-soft); }
+.chip.ok { border-color: var(--hema); color: var(--hema); background: var(--hema-soft); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 500 0.9rem var(--f-body); padding: 10px 16px; border-radius: 6px; background: var(--hema); color: var(--surface); text-decoration: none; border: 0; cursor: pointer; }
+.btn:hover { background: var(--eosin); color: var(--surface); }
+.btn.ghost { background: transparent; color: var(--hema); border: 1px solid var(--hema); }
+.btn.ghost:hover { color: var(--eosin); border-color: var(--eosin); background: transparent; }
+
+/* Header */
+.bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 20px; padding-block: 14px; }
+.brand { font-family: var(--f-display); font-weight: 600; font-size: 1.15rem; color: var(--ink); text-decoration: none; white-space: nowrap; display: flex; align-items: center; gap: 10px; }
+.brand svg { flex: none; }
+.bar nav { display: flex; gap: 18px; margin-left: auto; }
+.bar nav a { font-size: 0.9rem; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.bar nav a:hover, .bar nav a[aria-current="page"] { color: var(--eosin); }
+
+/* Section rhythm */
+section { padding-block: 56px; border-bottom: 1px solid var(--line); }
+.sec-head { display: grid; gap: 8px; margin-bottom: 26px; }
+.sec-head h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); }
+
+/* Footer */
+footer.site { padding-block: 40px 56px; color: var(--muted); font-size: 0.88rem; }
+footer.site .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
+footer.site a { color: var(--muted); }
+
+/* Long-form prose rendered from Markdown */
+.prose { max-width: 68ch; display: grid; gap: 18px; }
+.prose h2 { font-size: clamp(1.45rem, 2.8vw, 1.9rem); margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--line); }
+.prose h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.prose h3 { font-size: 1.2rem; margin-top: 8px; }
+.prose ul, .prose ol { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.prose blockquote { margin: 0; padding: 14px 18px; border-left: 3px solid var(--eosin); background: var(--surface); }
+.prose code { font-family: var(--f-mono); font-size: 0.86em; background: var(--hema-soft); padding: 1px 5px; border-radius: 3px; }
+.prose pre { margin: 0; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 0.82rem; }
+.prose pre code { background: none; padding: 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 0.93rem; display: block; overflow-x: auto; }
+.prose th, .prose td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+.prose hr { border: 0; border-top: 1px solid var(--line); width: 100%; }
+.prose .lead { font-size: 1.12rem; }
+.prose .limit { color: var(--muted); }
+.prose strong.lim { color: var(--eosin); font: 600 0.72rem var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; margin-right: 6px; }
+.prose .hyp { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.prose .hyp > div { background: var(--surface); border: 1px solid var(--line); padding: 20px; display: grid; gap: 10px; align-content: start; }
+.prose .hyp .tag { font-family: var(--f-display); font-size: 2.2rem; font-weight: 700; line-height: 1; }
+.prose .hyp .h1 .tag { color: var(--hema); }
+.prose .hyp .h0 .tag { color: var(--eosin); }
+.prose .phases { list-style: none; padding: 0; gap: 18px; }
+.prose .phases li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; }
+.prose .phases .dot { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--hema); display: grid; place-items: center; font: 700 1.2rem var(--f-display); color: var(--hema); background: var(--surface); }
+.prose .phases li:last-child .dot { border-color: var(--eosin); color: var(--eosin); }
+.prose .phases div { min-width: 0; display: grid; gap: 4px; }
+.prose .pipe { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font: 0.84rem var(--f-mono); }
+.prose .pipe span { padding: 6px 10px; border: 1px solid var(--line); background: var(--surface); }
+.prose .pipe i { font-style: normal; color: var(--muted); }
