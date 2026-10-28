@@ -2,7 +2,7 @@
 export default {
   // Shown in the header, browser tab and feeds
   title: "Open Questions",
-  tagline: "Long-form ideas, hypotheses and deep thoughts, published for open critique by people and AI.",
+  tagline: "Thoughts, observations and long-form ideas that need more room than a conversation allows.",
   // Pen name shown on the site. Leave empty ("") to show no author at all.
   author: "",
 

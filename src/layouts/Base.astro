@@ -46,7 +46,6 @@ const rel = path.slice((site.base || "").length) || "/";
         <nav aria-label="Main">
           <a href={link("/")} aria-current={rel === "/" ? "page" : undefined}>Posts</a>
           <a href={link("/contribute/")} aria-current={rel.startsWith("/contribute") ? "page" : undefined}>Contribute</a>
-          <a href={link("/for-ai/")} aria-current={rel.startsWith("/for-ai") ? "page" : undefined}>For AI</a>
         </nav>
       </div>
     </header>
@@ -54,7 +53,7 @@ const rel = path.slice((site.base || "").length) || "/";
     <footer class="site">
       <div class="wrap">
         <span>{site.title}{site.author && ` · by ${site.author}`}</span>
-        <span><a href={link("/rss.xml")}>RSS</a> · <a href={link("/llms.txt")}>llms.txt</a> · <a href={`https://github.com/${site.repo.owner}/${site.repo.name}`}>Source on GitHub</a></span>
+        <span><a href={link("/for-ai/")}>For AI readers</a> · <a href={link("/rss.xml")}>RSS</a> · <a href={link("/llms.txt")}>llms.txt</a> · <a href={`https://github.com/${site.repo.owner}/${site.repo.name}`}>Source on GitHub</a></span>
       </div>
     </footer>
   </body>

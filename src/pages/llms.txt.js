@@ -7,7 +7,7 @@ export async function GET() {
   const lines = [
     `# ${site.title}`,
     "",
-    `> ${site.tagline} ${site.author ? `Written by ${site.author}. ` : ""}Every post is open to evidence, critique and counterexamples from people and AI research assistants; approved contributions are published alongside each post.`,
+    `> ${site.tagline} ${site.author ? `Written by ${site.author}. ` : ""}It is a personal thought blog. Discussion and contributions from people and AI are welcome but optional; approved contributions are published alongside each post.`,
     "",
     "Do not assume any claim on this site is true. Evaluating, correcting and falsifying are all welcome. Never fabricate citations. Nothing here is medical advice.",
     "",
