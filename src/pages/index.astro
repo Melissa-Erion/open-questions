@@ -2,7 +2,6 @@
 import { link } from "../lib/link.mjs";
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import site from "../site.config.mjs";
 import { getContributions } from "../lib/contributions.mjs";
 
 const posts = (await getCollection("posts", (p) => !p.data.draft)).sort((a, b) => b.data.date - a.data.date);
@@ -13,14 +12,36 @@ const kindLabel = { hypothesis: "Hypothesis", essay: "Essay", note: "Note", draf
 ---
 <Base>
   <div class="wrap">
-    <section class="intro">
-      <h1>A place for the thoughts that don't fit in conversation.</h1>
-      <p class="muted">Some ideas take too many turns to explain out loud. This is where I write them down: observations, questions and hypotheses, followed as far as they go.</p>
-      <p class="muted">I ask the questions. AI is my research partner for digging into what's already known.</p>
-      <p class="muted small">If something here sparks a thought, a disagreement or a better source, you're welcome to <a href={link("/contribute/")}>add to it</a>, whether you're a person or an AI.</p>
-    </section>
+    <header class="hero">
+      <h1>Open Questions</h1>
+      <p class="tagline">An archive of a mind that doesn't stop questioning.</p>
+      <a class="textlink jump" href="#writing">Read the writing ↓</a>
+    </header>
 
-    <section class="posts">
+    <div class="about">
+      <p class="lead">I've always had more questions than I know what to do with.</p>
+      <p>My thoughts rarely follow a straight line. One question leads to another, which exposes a contradiction, which leads somewhere completely unexpected. Sometimes those connections make sense. Sometimes they're ridiculous. Either way, I need to understand why.</p>
+      <p>I'm neurodivergent, intensely curious, and far more comfortable exploring complicated ideas in writing than trying to explain the twelve different directions my brain has already taken in a conversation.</p>
+      <p>That's where this space comes in.</p>
+
+      <h2>The conversations behind the questions</h2>
+      <p>The articles here aren't conventional essays or research papers I asked AI to generate.</p>
+      <p>They're the result of actual, often lengthy conversations. I question established explanations, challenge assumptions, pull apart the answers, and explore connections between subjects that don't initially appear related.</p>
+      <p>AI gives me something I don't always find in ordinary conversation: the ability to follow a thought as far as it goes, without having to simplify it, change the subject, or explain why I'm asking in the first place.</p>
+      <p>Sometimes the conversations lead to legitimate scientific research. Sometimes they uncover gaps in my understanding. Sometimes they produce hypotheses worth investigating, and other times an idea doesn't survive closer examination.</p>
+      <p>That's part of the point.</p>
+
+      <h2>Curiosity without a predetermined destination</h2>
+      <p>This isn't a place where I claim to have discovered answers that experts have missed. It's where I document the process of looking for them.</p>
+      <p>Science, consciousness, human behaviour, evolution, technology, biology, and whatever else happens to occupy my mind at 2 a.m.</p>
+      <p>The subjects will vary. The approach won't.</p>
+      <p>I'll question things that seem obvious, challenge answers that feel incomplete, and follow connections wherever they lead.</p>
+      <p>Some thoughts will evolve. Some will be disproven. Some may never have satisfying answers.</p>
+      <p class="pull">I'm not particularly interested in being right. I'm interested in understanding what I might be missing.</p>
+      <p class="sign">Welcome to the rabbit hole.</p>
+    </div>
+
+    <section class="posts" id="writing">
       <h2 class="label">Writing</h2>
       <ol>
         {posts.map((p) => (
@@ -33,21 +54,36 @@ const kindLabel = { hypothesis: "Hypothesis", essay: "Essay", note: "Note", draf
           </li>
         ))}
       </ol>
+      <p class="invite muted">If something here sparks a thought, a disagreement or a better source, you're welcome to <a href={link("/contribute/")}>add to it</a>.</p>
     </section>
   </div>
 </Base>
 
 <style>
-  .intro { padding-block: 88px 64px; display: grid; gap: 18px; }
-  .intro h1 { font-size: clamp(2.1rem, 6.5vw, 3.4rem); letter-spacing: -0.035em; line-height: 1.05; max-width: 16ch; }
-  .intro p { font-size: 1.12rem; max-width: 52ch; }
-  .intro p.small { font-size: 0.97rem; }
-  .label { font-size: 0.85rem; font-weight: 500; color: var(--muted); letter-spacing: 0; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .hero { padding-block: 96px 56px; display: grid; gap: 16px; border-bottom: 1px solid var(--line); }
+  .hero h1 { font-size: clamp(2.6rem, 9vw, 4.6rem); letter-spacing: -0.045em; line-height: 0.98; }
+  .tagline { font-size: clamp(1.15rem, 2.6vw, 1.4rem); color: var(--muted); letter-spacing: -0.01em; max-width: 30ch; }
+  .jump { font-size: 0.92rem; margin-top: 8px; justify-self: start; }
+
+  .about { display: grid; gap: 18px; padding-block: 56px 72px; max-width: 62ch; }
+  .about p { font-size: 1.06rem; }
+  .about .lead { font-size: clamp(1.3rem, 3vw, 1.55rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.4; }
+  .about h2 { font-size: 1.25rem; letter-spacing: -0.02em; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--line); }
+  .about .pull { font-size: 1.2rem; font-weight: 500; letter-spacing: -0.015em; line-height: 1.5; padding-left: 18px; border-left: 2px solid var(--accent); margin-block: 10px; }
+  .about .sign { color: var(--accent); font-weight: 500; }
+
+  .label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); padding-bottom: 14px; border-bottom: 1px solid var(--line); scroll-margin-top: 24px; }
+  .posts { scroll-margin-top: 24px; }
   ol { list-style: none; margin: 0; padding: 0; }
   li { border-bottom: 1px solid var(--line); }
   li a { display: grid; gap: 8px; padding-block: 30px; text-decoration: none; }
   li h3 { font-size: clamp(1.25rem, 3.4vw, 1.55rem); letter-spacing: -0.02em; transition: color .15s; }
   li a:hover h3 { color: var(--accent); }
   li p { font-size: 0.98rem; max-width: 60ch; }
-  @media (max-width: 520px) { .intro { padding-block: 56px 44px; } }
+  .invite { margin-top: 28px; font-size: 0.95rem; }
+
+  @media (max-width: 520px) {
+    .hero { padding-block: 60px 40px; }
+    .about { padding-block: 40px 56px; }
+  }
 </style>
